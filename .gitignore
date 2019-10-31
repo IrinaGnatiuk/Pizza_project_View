@@ -1,0 +1,7 @@
+__pycache__
+myvenv
+/static
+mysite\__pycache__\
+pizza\__pycache__\
+migrations\__pycache__\
+.idea
