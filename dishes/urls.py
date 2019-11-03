@@ -1,10 +1,12 @@
 from django.conf.urls import url, include
 from django.urls import path
-from . import views
+from .views import *
+
 
 urlpatterns = [
-    path('dishes/', views.DishView.as_view()),
-    path('ingredients/', views.IngredientView.as_view()),
-    path('drinks/', views.DrinkView.as_view()),
-
+    path('dishes/', DishView.as_view()),
+    path('', StartView.as_view()),
+    path('ingredients/', IngredientView.as_view()),
+    path('drinks/', DrinkView.as_view()),
+    path('ingredients/new', MakeIngredient.as_view(), name='ingredient_form'),
 ]
