@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import ListView, View, TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from dishes.models import Dish, Drink, Ingredient
 from django.http import HttpResponse
-from .forms import IngredientForm
-from django.forms import ModelForm
+from .forms import IngredientForm, DrinkForm, DishForm
 
 
 class DishView(TemplateView):
@@ -14,30 +13,63 @@ class DishView(TemplateView):
     success_url = '/'
 
     def get_context_data(self, **kwargs):
-        context = super(DishView, self).get_context_data(**kwargs)
-        # context = Order.objects.filter(price__gt=50).order_by('-price')
-        context['user_profile'] = Dish.objects.all()
-        context['my_var'] = 'TemplateView'
+        context = super().get_context_data(**kwargs)
+        context['my_var'] = 'DishTemplateView'
         return context
 
 
 class DrinkView(ListView):
     model = Drink
     template_name = 'dishes/drinks.html'
-    queryset = Drink.objects.order_by("-date_create")
+    queryset = Drink.objects.order_by("name")
     context_object_name = 'drink'
 
-    def get_quertyset(self):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['my_var'] = 'DrinkListView'
+        return context
+
+    def get_quertyset(self, *args, **kwargs):
         return Drink.objects.all()
+
+
+class DishViewList(ListView):
+    model = Dish
+    template_name = 'dishes/dishes.html'
+    queryset = Dish.objects.order_by("name")
+    context_object_name = 'dishes'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['my_var'] = 'DishesListView'
+        return context
+
+    def get_quertyset(self, *args, **kwargs):
+        return Dish.objects.all()
+
+
+class IngredientViewList(ListView):
+    model = Ingredient
+    template_name = 'dishes/ingredient_list.html'
+    queryset = Ingredient.objects.order_by("name")
+    context_object_name = 'ingredients'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['my_var'] = 'IngredientListView'
+        return context
+
+    def get_quertyset(self, *args, **kwargs):
+        return Ingredient.objects.all()
 
 
 class IngredientView(View):
     model = Ingredient
     context_object_name = 'ingredient'
-    template_name = 'dishes/ingredients.html'
+    template_name = 'dishes/ingredient.html'
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse("INGREDIENTS!!!")
+        return HttpResponse("INGREDIENT(View)!!!")
 
 
 class StartView(TemplateView):
@@ -61,3 +93,40 @@ class MakeIngredient(FormView):
         return super().form_invalid(form_class)
 
 
+class MakeDrink(FormView):
+    model = Drink
+    template_name = 'dishes/drinks_form.html'
+    success_url = "/"
+    form_class = DrinkForm
+
+    def form_valid(self, form_class):
+        Drink.objects.create(**form_class.cleaned_data)
+        return super().form_valid(form_class)
+
+
+class MakeDishes(FormView):
+    model = Dish
+    template_name = 'dishes/dishes_form.html'
+    success_url = '/'
+    form_class = DishForm
+
+
+class UpdateDrink(UpdateView):
+    form_class = DrinkForm
+    model = Drink
+    template_name = 'dishes/drinks_form.html'
+    success_url = '/'
+
+
+class UpdateIngredient(UpdateView):
+    form_class = IngredientForm
+    model = Ingredient
+    template_name = 'dishes/ingredients.html'
+    success_url = '/'
+
+
+class UpdateDish(UpdateView):
+    form_class = DishForm
+    model = Dish
+    template_name = 'dishes/dishes_form.html'
+    success_url = '/'
