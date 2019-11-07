@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class BaseItem(models.Model):
     name = models.CharField(max_length=255)
@@ -43,6 +41,3 @@ class Drink(BaseItem):
     class Meta:
         verbose_name = 'Напиток'
         verbose_name_plural = 'Напитки'
-
-
-
